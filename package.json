@@ -1,0 +1,10 @@
+{
+  "name": "diff-css-data",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "dependencies": {
+    "mdn-data": "2",
+    "@webref/css": "6"
+  }
+}
