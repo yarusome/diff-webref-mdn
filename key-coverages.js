@@ -87,7 +87,7 @@ export default {
   "scrollContainers": [
     "scroll containers",
   ],
-  "seeIndividualProperties": [
+  "see individual properties": [
     "see individual properties",
   ],
   "transformableElements": [
