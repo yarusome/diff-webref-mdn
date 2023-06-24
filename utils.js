@@ -91,8 +91,9 @@ export {
    */
   getJSONList,
   /**
-   * Check if an object's `@@iterator` cannot produce the next value
-   * or the object has no enumerable key.
+   * Check if an object's `@@iterator`,
+   * if it exists, produces no next value,
+   * *and* the object has no enumerable key.
    * @param {Object} obj
    * @return {boolean}
    */
