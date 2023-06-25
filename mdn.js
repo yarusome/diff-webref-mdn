@@ -72,7 +72,9 @@ function reorgKeys(obj) {
 
     // Workaround for shorthand properties
     if (Array.isArray(value)) {
-      obj[key] = "see individual properties";
+      obj[key] = key == "inherited"
+        ? "see individual properties"
+        : "seeIndividualProperties";
       continue;
     }
 
