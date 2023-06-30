@@ -149,6 +149,8 @@ Example:
 "functions": {}
 ```
 
+> **Note:** Prefixed definitions will be removed from the diff if not found in `w3c/webref`. Therefore it is unnecessary to specifically block prefixed definitions.
+
 ## Structure of `webref-filters.js`
 
 `webref-filters.js` is effectively a JSON file, but wrapped as a module to enable the full syntax of JavaScript, including comments and trailing commas.
