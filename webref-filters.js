@@ -94,6 +94,7 @@ export default {
   "css-transforms": {},
   "css-transforms-2": {},
   "css-transitions": {},
+  "css-transitions-2": {},
   "css-ui": {},
   "css-values": {},
   "css-values-5": {},
