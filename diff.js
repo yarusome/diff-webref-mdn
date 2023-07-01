@@ -10,11 +10,6 @@ import {
 import keyCoverages from "./key-coverages.js";
 import * as utils from "./utils.js";
 
-const literalKeys = new Set([
-  "initial",
-  "syntax",
-]);
-
 for (const key in keyCoverages) {
   keyCoverages[key] = new Set(keyCoverages[key]);
 }
@@ -59,8 +54,8 @@ function diff(mdn, ref) {
         }
 
         if (
-          literalKeys.has(key) &&
-          !(key == "initial" && mdn == "seeIndividualProperties")
+          (key == "initial" && mdn != "seeIndividualProperties") ||
+          key == "syntax"
         ) {
           if (mdn === ref) {
             delete mdnItem[key];
