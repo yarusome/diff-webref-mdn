@@ -19,10 +19,16 @@ export default {
   ],
   "asSpecified": [
     "as specified",
+    "specified integer",
     "specified keyword",
     "specified keyword or a pair of numbers",
+    "specified keyword or identifier",
+    "specified keyword or percentage",
     "specified keyword(s)",
     "specified keyword, identifier, and/or integer",
+    "specified number",
+    "specified string or the keyword none",
+    "specified value",
   ],
   "blockContainerElements": [
     "block container elements",
@@ -33,7 +39,8 @@ export default {
   "blockLevelElements": [
     "block-level elements",
   ],
-  "byComputedValueType": [
+  "byComputedValue": [
+    "by computed value",
     "by computed value type",
   ],
   "computedColor": [
@@ -66,6 +73,9 @@ export default {
   "no": [
     "no",
   ],
+  "notAnimatable": [
+    "not animatable",
+  ],
   "perGrammar": [
     "per grammar",
   ],
@@ -89,6 +99,9 @@ export default {
   ],
   "seeIndividualProperties": [
     "see individual properties",
+  ],
+  "shadowList": [
+    "as shadow list",
   ],
   "transformableElements": [
     "transformable elements",

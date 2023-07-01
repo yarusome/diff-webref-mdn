@@ -59,7 +59,10 @@ function diff(mdn, ref) {
           continue;
         }
 
-        if (literalKeys.has(key)) {
+        if (
+          literalKeys.has(key) &&
+          !(key == "inherited" && mdn == "seeIndividualProperties")
+        ) {
           if (mdn === ref) {
             delete mdnItem[key];
             continue;
