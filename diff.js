@@ -11,7 +11,6 @@ import keyCoverages from "./key-coverages.js";
 import * as utils from "./utils.js";
 
 const literalKeys = new Set([
-  "inherited",
   "initial",
   "syntax",
 ]);
@@ -61,7 +60,7 @@ function diff(mdn, ref) {
 
         if (
           literalKeys.has(key) &&
-          !(key == "inherited" && mdn == "seeIndividualProperties")
+          !(key == "initial" && mdn == "seeIndividualProperties")
         ) {
           if (mdn === ref) {
             delete mdnItem[key];
