@@ -143,7 +143,7 @@ Example:
   ],
   "subkeys": [
     "syntax",
-    "descriptors",
+    "descriptors"
   ],
 },
 "functions": {}
@@ -155,9 +155,7 @@ Example:
 
 `webref-filters.js` is effectively a JSON file, but wrapped as a module to enable the full syntax of JavaScript, including comments and trailing commas.
 
-Its keys are the specification JSONs' names under [`ed/css`](https://github.com/w3c/webref/tree/curated/ed/css/) in `w3c/webref`, which indicate the specifications included for the diff.
-
-Its values are `<filter>`s as recursively defined below:
+Its structure is a `<filter>` as recursively defined below:
 
 ```
 <filter> = {
@@ -175,35 +173,42 @@ where:
   - `<key>`s under `allow` indicate the keys included at this level, and `allow` defaults to the array of all keys at this level;
   - `<key>`s under `block` indicate the keys excluded at this level, and `block` defaults to the empty array.
 
-> **Note:** Although `allow` and `block` can be present at the same level, this would likely obscure the filters' intention.
+> **Note:** If `allow` and `block` are both present at the same level, `block` will be ignored.
+
+The top-level keys are the names of the specification JSONs under [`ed/css`](https://github.com/w3c/webref/tree/curated/ed/css/) in `w3c/webref`, which indicate the specifications included for the diff.
 
 Example:
 
 ```json
-"css-fonts": {
+{
   "[[block]]": [
-    "types"
+    "css-color-6"
   ],
-  "atrules": {
-    "[[allow]]": [
-      "@font-face",
-      "@font-palette-values"
+  "css-fonts": {
+    "[[block]]": [
+      "types"
     ],
-    "@font-face": {
-      "descriptors": {
-        "[[allow]]": [
-          "font-family",
-          "src"
+    "atrules": {
+      "[[allow]]": [
+        "@font-face",
+        "@font-palette-values"
+      ],
+      "@font-face": {
+        "descriptors": {
+          "[[allow]]": [
+            "font-family",
+            "src"
+          ]
+        }
+      }
+    },
+    "properties": {
+      "font-weight": {
+        "[[block]]": [
+          "computed",
+          "order"
         ]
       }
-    }
-  },
-  "properties": {
-    "font-weight": {
-      "[[block]]": [
-        "computed",
-        "order"
-      ]
     }
   }
 }
