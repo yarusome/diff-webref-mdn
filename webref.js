@@ -6,15 +6,53 @@ if (typeof window == "undefined") {
   const { listAll } = await import("@webref/css");
   data = await listAll();
 
-  for (const key in data) {
-    if (!(key in filters)) {
-      delete data[key];
+  if ("[[allow]]" in filters) {
+    let allow = new Set(filters["[[allow]]"]);
+    for (const key in data) {
+      if (allow.has(key)) {
+        allow.delete(key);
+      } else {
+        delete data[key];
+      }
     }
+    filters["[[allow]]"] = [...allow];
+  } else if ("[[block]]" in filters) {
+    let block = new Set(filters["[[block]]"]);
+    for (const key in data) {
+      if (block.has(key)) {
+        delete data[key];
+        block.delete(key);
+      }
+    }
+    filters["[[block]]"] = [...block];
   }
 } else {
   const webrefBase = self.webrefBase ||
     "https://github.com/w3c/webref/raw/curated/ed/";
-  const specs = Object.keys(filters);
+
+  let specs;
+  if ("[[allow]]" in filters) {
+    specs = filters["[[allow]]"];
+  } else {
+    const index = await utils.getJSON(`${webrefBase}index.json`);
+    specs = new Set(
+      index.results.filter((spec) => "css" in spec)
+        .map((spec) => /(?<=^css\/).*(?=\.json$)/.exec(spec.css)[0])
+    );
+
+    if ("[[block]]" in filters) {
+      let block = new Set(filters["[[block]]"]);
+      for (const spec of specs) {
+        if (block.has(spec)) {
+          specs.delete(spec);
+          block.delete(spec);
+        }
+      }
+      filters["[[block]]"] = [...block];
+    }
+
+    specs = [...specs];
+  }
 
   data = await utils.getJSONList(
     specs.map((spec) => `${webrefBase}css/${spec}.json`)
@@ -30,7 +68,7 @@ const keyMap = {
   "canonicalOrder": "order",
   "value": "syntax",
 };
-/** Keys under which the values won't go through normalizationString() */
+// Keys under which the values will not go through `normalizationString()`
 const noNormalizationKeys = new Set([
   "name",
   "newValues",
@@ -58,7 +96,7 @@ const unusedKeys = [
 ];
 
 /**
- * Change sentences into clauses, and normalize some patterns.
+ * Convert sentences to clauses and normalize some patterns.
  * @param {string} str
  * @return {string}
  */
@@ -141,7 +179,7 @@ function reorgKeys(spec, obj) {
     obj[keyMap[key] || key] = value;
   }
 
-  // If obj represents a type, uplift it to the corresponding type.
+  // If `obj` represents a type, uplift it to the corresponding type.
   if ("type" in obj) {
     const type = typeMap[obj.type];
     delete obj.type;
@@ -191,15 +229,8 @@ function filterKeys(obj, filter) {
         keys.delete(key);
       }
     }
-
-    if (utils.isEmpty(allow)) {
-      delete filter["[[allow]]"];
-    } else {
-      filter["[[allow]]"] = [...allow];
-    }
-  }
-
-  if ("[[block]]" in filter) {
+    filter["[[allow]]"] = [...allow];
+  } else if ("[[block]]" in filter) {
     let block = new Set(filter["[[block]]"]);
     for (const key of keys) {
       if (block.has(key)) {
@@ -207,12 +238,7 @@ function filterKeys(obj, filter) {
         block.delete(key);
       }
     }
-
-    if (utils.isEmpty(block)) {
-      delete filter["[[block]]"];
-    } else {
-      filter["[[block]]"] = [...block];
-    }
+    filter["[[block]]"] = [...block];
   }
 
   if (isArray) {
@@ -231,22 +257,25 @@ function filterKeys(obj, filter) {
 
   for (const key in obj) {
     const keyName = isArray ? obj[key].name : key;
-    if (!(keyName in filter)) {
-      continue;
+    if (keyName in filter) {
+      filterKeys(obj[key], filter[keyName]);
     }
+  }
 
-    filterKeys(obj[key], filter[keyName]);
-
-    if (utils.isEmpty(filter[keyName])) {
-      delete filter[keyName];
+  for (const key in filter) {
+    if (utils.isEmpty(filter[key])) {
+      delete filter[key];
     }
   }
 }
 
 for (const key in data) {
-  filterKeys(data[key], filters[key]);
+  if (key in filters) {
+    filterKeys(data[key], filters[key]);
+  }
 }
 
+// Clean up empty keys, including `[[allow]]` and `[[block]]`
 for (const key in filters) {
   if (utils.isEmpty(filters[key])) {
     delete filters[key];
@@ -267,7 +296,7 @@ data = Object.fromEntries(
 );
 
 /**
- * Merge the homogeneoues items in an array by their "name" values.
+ * Merge the homogeneoues items in an array by their `name` values.
  * @param {Array} arr
  * @return {Object}
  */
@@ -306,7 +335,7 @@ function mergeItems(arr) {
         : [...new Set(subsubarr)];
     }
 
-    // Append "newValues" to "syntax"
+    // Append `newValues` to `syntax`
     if ("newValues" in obj) {
       if (obj.syntax.length > 1) {
         obj.syntax.push(...obj.newValues);
