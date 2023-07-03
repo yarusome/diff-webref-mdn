@@ -270,7 +270,9 @@ function filterKeys(obj, filter) {
 }
 
 for (const key in data) {
-  filterKeys(data[key], filters[key]);
+  if (key in filters) {
+    filterKeys(data[key], filters[key]);
+  }
 }
 
 // Clean up empty keys, including `[[allow]]` and `[[block]]`
