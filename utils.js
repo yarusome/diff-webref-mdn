@@ -28,29 +28,24 @@ function genLexicoOrder(...keys) {
   };
 }
 
-function getJSON(url) {
-  return new Promise(
-    (resolve) => {
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = "json";
-      xhr.onload = () => {
-        if (xhr.status >= 400) {
-          throw new ReferenceError(`Failed to request ${url}.`);
-        }
-        resolve(xhr.response);
-      }
-      xhr.onerror = () => {
-        console.warn(`Retry requesting ${url} in 5 seconds.`);
-        setTimeout(
-          () => resolve(utils.getJSON(url)),
-          5000
-        );
-      };
-
-      xhr.open("GET", url);
-      xhr.send();
+async function getJSON(url) {
+  let response;
+  while (true) {
+    try {
+      response = await fetch(url);
+      break;
+    } catch {
+      console.warn(`Retry requesting ${url} in 5 seconds.`);
+      await new Promise(
+        (resolve) => setTimeout(resolve, 5000)
+      );
     }
-  );
+  }
+
+  if (response.ok) {
+    return response.json();
+  }
+  throw new ReferenceError(`Failed to request ${url}.`);
 }
 
 function getJSONList(list) {
@@ -81,13 +76,13 @@ export {
   /**
    * Get an object from the URL to a JSON file.
    * @param {string} url
-   * @return {Object}
+   * @return {Promise<Object>}
    */
   getJSON,
   /**
    * Get an array of objects from an array of URLs to JSON files.
    * @param {string[]} list
-   * @return {Object[]}
+   * @return {Promise<Object[]>}
    */
   getJSONList,
   /**
